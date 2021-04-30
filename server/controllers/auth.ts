@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import { RequestHandler } from 'express'
 import { check, validationResult } from 'express-validator'
 import { PrismaClient, User } from '@prisma/client'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
@@ -6,16 +6,17 @@ import * as argon2 from 'argon2'
 
 import * as authValidator from '../utils/validators/auth'
 import * as authUtils from '../utils/auth-helpers'
+import constants from '../constants'
 
 const prisma = new PrismaClient()
 
-export const login = async (req: Request, res: Response, next: NextFunction) => {
+export const login: RequestHandler = async (req, res) => {
 	try {
 		await check('password')
 			.isLength({ min: 5 })
 			.withMessage('must be at least 5 chars long')
-			.matches(/\d/)
-			.withMessage('must contain a number')
+			// .matches(/\d/)
+			// .withMessage('must contain a number')
 			.run(req)
 
 		const errors = validationResult(req)
@@ -52,14 +53,14 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 			return res.boom.badData('Incorrect password')
 		}
 
-		const tokenJWT = authUtils.generateJWTToken(user)
-		return res.json({ success: true, token: tokenJWT.token, expiresIn: tokenJWT.expiresIn })
+		return authUtils.refreshAllTokens(res, user.id)
 	} catch (err) {
+		console.error(err)
 		return res.boom.boomify(err)
 	}
 }
 
-export const register = async (req: Request, res: Response, next: NextFunction) => {
+export const register: RequestHandler = async (req, res) => {
 	try {
 		await check('email', 'Email is not valid')
 			.isEmail()
@@ -72,7 +73,6 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 			.matches(/\d/)
 			.withMessage('must contain a number')
 			.run(req)
-		await check('confirmPassword', 'Passwords do not match').equals(req.body.password).run(req)
 
 		const errors = validationResult(req)
 		if (!errors.isEmpty()) {
@@ -85,8 +85,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 			data: authValidator.createUser(req.body.email, req.body.srn, hashedPassword),
 		})
 
-		const tokenJWT = authUtils.generateJWTToken(user)
-		return res.json({ success: true, token: tokenJWT.token, expiresIn: tokenJWT.expiresIn })
+		return authUtils.refreshAllTokens(res, user.id)
 	} catch (err) {
 		console.error(err)
 		if (err instanceof PrismaClientKnownRequestError) {
@@ -96,5 +95,34 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 			}
 		}
 		return res.boom.boomify(err)
+	}
+}
+
+export const refreshToken: RequestHandler = async (req, res) => {
+	const rtk = req.cookies.rtk
+
+	if (!rtk) {
+		console.log('no rtk')
+		return res.send({ success: false, accessToken: '' })
+	}
+
+	try {
+		const payload = authUtils.getPayloadFromToken(rtk, constants.REFRESH_SECRET)
+		const { sub } = payload as any
+
+		const user = await prisma.user.findUnique({
+			where: { id: sub },
+		})
+
+		if (!user) {
+			console.log('no user')
+			return res.send({ success: false, accessToken: '' })
+		}
+
+		return authUtils.refreshAllTokens(res, user.id)
+	} catch (err) {
+		console.error(err)
+		console.log('error refreshing token')
+		return res.send({ success: false, accessToken: '' })
 	}
 }

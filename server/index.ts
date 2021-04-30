@@ -4,6 +4,7 @@ import boom from 'express-boom'
 import cors from 'cors'
 import errorHandler from 'errorhandler'
 import { loadEnvConfig } from '@next/env'
+import cookieParser from 'cookie-parser'
 
 loadEnvConfig('./', process.env.NODE_ENV !== 'production')
 
@@ -39,11 +40,13 @@ server.prepare().then(async () => {
 
 	// Express Configuration
 	app.set('port', process.env.PORT || 3000)
+	app.use(cors({ credentials: true, origin: true }))
+	app.use(cookieParser())
 	app.use(passport.initialize())
 	app.use(express.json())
 	app.use(express.urlencoded({ extended: true }))
-	app.use(cors())
 	app.use(boom())
+	app.disable('x-powered-by')
 
 	/**
 	 * Primary app routes.
@@ -57,6 +60,7 @@ server.prepare().then(async () => {
 			return res.json({ success: true, message: 'You are successfully authenticated' })
 		}
 	)
+	app.post('/refresh_token', authController.refreshToken)
 	app.get(
 		'/auth/google',
 		passport.authenticate('google', { session: false, scope: ['profile', 'email'] })
@@ -70,7 +74,11 @@ server.prepare().then(async () => {
 	app.get('/auth/facebook', passport.authenticate('facebook', { session: false, scope: 'email' }))
 	app.get(
 		'/auth/facebook/callback',
-		passport.authenticate('facebook', { session: false, scope: 'email' }),
+		passport.authenticate('facebook', {
+			session: false,
+			scope: 'email',
+			failureRedirect: '/login',
+		}),
 		authMiddleware.getJWTToken
 	)
 

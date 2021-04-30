@@ -1,43 +1,32 @@
 {
-  "compilerOptions": {
-    "target": "es2018",
-    "module": "commonjs",
-    "outDir": "./dist",
-    "lib": [
-      "es2018",
-      "esnext.asynciterable"
-    ],
-    "strict": true,
-    "moduleResolution": "node",
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "inlineSourceMap": true,
-    "removeComments": true,
-    "resolveJsonModule": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "baseUrl": "./",
-    "allowJs": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "isolatedModules": true,
-    "jsx": "preserve"
-  },
-  "typeRoots": [
-    "./node_modules/@types"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+	"compilerOptions": {
+		"target": "es2018",
+		"module": "commonjs",
+		"outDir": "./dist",
+		"lib": ["DOM", "es2018", "esnext.asynciterable"],
+		"strict": true,
+		"moduleResolution": "node",
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"noImplicitReturns": true,
+		"noUnusedLocals": true,
+		"allowSyntheticDefaultImports": true,
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"inlineSourceMap": true,
+		"removeComments": true,
+		"resolveJsonModule": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"baseUrl": "./",
+		"allowJs": true,
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": true,
+		"isolatedModules": true,
+		"jsx": "preserve"
+	},
+	"typeRoots": ["./node_modules/@types"],
+	"exclude": ["node_modules"],
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }

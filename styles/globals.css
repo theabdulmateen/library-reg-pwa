@@ -21,3 +21,48 @@
 	position: relative !important;
 	@apply min-h-screen;
 }
+
+.sticky-bottom {
+	@apply fixed h-14 bg-white bottom-0 left-0 right-0 flex justify-center;
+}
+.sticky-bottom::after,
+.sticky-bottom::before {
+	content: '';
+	z-index: -1;
+	position: absolute;
+	top: -80px;
+	height: 80px;
+	width: 50px;
+	background-color: transparent;
+	box-shadow: 0 35px 0 0 white;
+}
+.sticky-bottom::before {
+	left: 0;
+	border-bottom-left-radius: 25px;
+}
+.sticky-bottom::after {
+	right: 0;
+	border-bottom-right-radius: 25px;
+}
+
+.btn-checkin {
+	@apply w-2/3 mb-2 rounded-md border-2 border-gray-800;
+}
+
+.modal-cover {
+	@apply fixed top-2/4 left-0 right-0 bottom-0 bg-white;
+	@apply border-t-[8px] rounded-t-[10%] border-gray-500;
+	@apply grid place-items-center;
+}
+
+.modal-container {
+	@apply px-4 flex flex-col items-center;
+}
+
+.modal-label {
+	@apply text-xl text-center mb-8 uppercase font-semibold;
+}
+
+.modal-overlay {
+	background-color: rgba(0, 0, 0, 0.9);
+}

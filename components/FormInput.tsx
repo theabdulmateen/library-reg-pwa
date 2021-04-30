@@ -5,9 +5,18 @@ interface FormInputPropType {
 	placeholder: string
 	type: string
 	isRequired: boolean
+	value: string
+	setValue: Function
 }
 
-const FormInput: React.FC<FormInputPropType> = ({ label, placeholder, type, isRequired }) => {
+const FormInput: React.FC<FormInputPropType> = ({
+	label,
+	placeholder,
+	type,
+	isRequired,
+	value,
+	setValue,
+}) => {
 	return (
 		<label className='w-full mb-4'>
 			<span className='h-8 text-md text-gray-500'>{label}</span>
@@ -16,6 +25,8 @@ const FormInput: React.FC<FormInputPropType> = ({ label, placeholder, type, isRe
 				type={type}
 				placeholder={placeholder}
 				required={isRequired}
+				value={value}
+				onChange={e => setValue(e.currentTarget.value)}
 			/>
 		</label>
 	)

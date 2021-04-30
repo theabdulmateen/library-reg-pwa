@@ -29,7 +29,7 @@ const passportJWTOptions: JWTStrategyOptions = {
 
 passport.use(
 	new JwtStrategy(passportJWTOptions, async (jwt_payload, done) => {
-		console.log(jwt_payload)
+		// console.log(jwt_payload)
 		try {
 			const user = await prisma.user.findUnique({
 				where: {

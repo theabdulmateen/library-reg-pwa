@@ -3,6 +3,7 @@ import { User as PrismaUser } from '.prisma/client'
 export type Constants = {
 	PUB_KEY: string
 	PRIV_KEY: string
+	REFRESH_SECRET: string
 	FACEBOOK_CLIENT_ID: string
 	FACEBOOK_CLIENT_SECRET: string
 	FACEBOOK_CALLBACK_URL: string

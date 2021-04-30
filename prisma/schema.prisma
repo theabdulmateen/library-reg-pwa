@@ -12,7 +12,7 @@ model User {
   email          String   @unique
   hashedPassword String?
   srn            String?  @unique
-  isCheckedIn    Boolean  @default(false)
+  checkInId      Int?
   fistName       String?
   lastName       String?
   googleId       String?  @unique
@@ -28,11 +28,12 @@ model Library {
 }
 
 model Record {
-  id           Int      @id @default(autoincrement())
-  user         User     @relation(fields: [userId], references: [id])
-  library      Library  @relation(fields: [libraryId], references: [id])
-  checkInTime  DateTime @default(now())
-  checkOutTime DateTime
-  userId       Int
-  libraryId    Int
+  id             Int      @id @default(autoincrement())
+  user           User     @relation(fields: [userId], references: [id])
+  library        Library  @relation(fields: [libraryId], references: [id])
+  userIdentifier String
+  checkInTime    DateTime @default(now())
+  checkOutTime   DateTime
+  userId         Int
+  libraryId      Int
 }
