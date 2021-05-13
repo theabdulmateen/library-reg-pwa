@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { faFacebook, faGithub, faGoogle } from '@fortawesome/free-brands-svg-icons'
+import { useToasts } from 'react-toast-notifications'
 
 import FormInput from 'components/FormInput'
 import { IconButton } from 'components/IconButton'
@@ -12,6 +13,7 @@ const Login = ({}) => {
 	const [emailOrSRN, setEmailOrSRN] = useState('')
 	const [password, setPassword] = useState('')
 	const router = useRouter()
+	const { addToast } = useToasts()
 
 	return (
 		<div className='min-h-screen bg-gray-200 grid place-items-center p-4'>
@@ -31,7 +33,11 @@ const Login = ({}) => {
 						if (res.success) {
 							router.replace('/')
 						} else {
-							alert('login failed..')
+							addToast(res.message, {
+								appearance: 'error',
+								autoDismiss: true,
+							})
+							// alert('login failed..')
 						}
 					}}>
 					<FormInput

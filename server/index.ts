@@ -84,6 +84,16 @@ server.prepare().then(async () => {
 
 	app.post('/check-in', passport.authenticate('jwt', { session: false }), regController.checkIn)
 	app.post('/check-out', passport.authenticate('jwt', { session: false }), regController.checkOut)
+	app.post(
+		'/export-all-records',
+		passport.authenticate('jwt', { session: false }),
+		regController.exportAllRecords
+	)
+	app.post(
+		'/export-records',
+		passport.authenticate('jwt', { session: false }),
+		regController.exportRecordsInRange
+	)
 
 	app.all('*', (req: Request, res: Response) => {
 		return handle(req, res)

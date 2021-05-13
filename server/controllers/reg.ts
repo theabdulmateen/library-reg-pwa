@@ -1,8 +1,7 @@
-import { PrismaClient } from '@prisma/client'
 import { RequestHandler } from 'express'
 import { check, validationResult } from 'express-validator'
 
-const prisma = new PrismaClient()
+import prisma from '../../lib/db'
 
 export const checkIn: RequestHandler = async (req, res) => {
 	try {
@@ -101,6 +100,46 @@ export const checkOut: RequestHandler = async (req, res) => {
 		return res.json({ success: true, record })
 	} catch (err) {
 		console.error(err.message)
+		return res.boom.boomify(err)
+	}
+}
+
+export const exportAllRecords: RequestHandler = async (req, res) => {
+	try {
+		const reports = await prisma.record.findMany()
+		return res.json({
+			success: true,
+			reports,
+		})
+	} catch (err) {
+		console.error(err)
+		return res.boom.boomify(err)
+	}
+}
+
+export const exportRecordsInRange: RequestHandler = async (req, res) => {
+	try {
+		const from = req.body.from || new Date(Date.now() - 1000 * 60 * 60 * 24)
+		const to = req.body.to || new Date(Date.now() + 1000 * 60 * 60 * 24)
+
+		const reports = await prisma.record.findMany({
+			where: {
+				AND: {
+					checkInTime: {
+						gte: from,
+					},
+					checkOutTime: {
+						lte: to,
+					},
+				},
+			},
+		})
+		return res.json({
+			success: true,
+			reports,
+		})
+	} catch (err) {
+		console.error(err)
 		return res.boom.boomify(err)
 	}
 }

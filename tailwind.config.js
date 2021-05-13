@@ -2,6 +2,11 @@ const colors = require('tailwindcss/colors')
 
 module.exports = {
 	mode: 'jit',
+	purge: [
+		'./public/**/*.html',
+		'./pages/**/*.{js,jsx,ts,tsx,vue,css,scss,yaml}',
+		'./components/**/*.{js,jsx,ts,tsx,vue,css,scss,yaml}',
+	],
 	theme: {
 		colors: {
 			gray: colors.coolGray,
@@ -30,7 +35,6 @@ module.exports = {
 			},
 		},
 	},
-	purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
 	darkMode: 'media',
 	variants: {
 		extend: {},

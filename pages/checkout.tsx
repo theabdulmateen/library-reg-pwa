@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { useRouter } from 'next/router'
 import fetch from 'isomorphic-fetch'
+import { useToasts } from 'react-toast-notifications'
 
 import { isAuth } from 'lib/auth'
 import { setAccessToken } from 'lib/accessToken'
-import { User } from '.prisma/client'
+import { User } from '@prisma/client'
 
 interface CheckOutProps {
 	user: User
@@ -15,6 +16,7 @@ interface CheckOutProps {
 const checkout = ({ user, accessToken }: CheckOutProps) => {
 	const [libraryId, setLibraryId] = useState('')
 	const router = useRouter()
+	const { addToast } = useToasts()
 
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
@@ -35,10 +37,17 @@ const checkout = ({ user, accessToken }: CheckOutProps) => {
 		const data = await response.json()
 		console.log('check out data: ', data)
 		if (data.success) {
+			addToast('Checked out successfully.', {
+				appearance: 'success',
+				autoDismiss: true,
+			})
 			router.replace('/')
 		} else {
 			console.error('something went round. whoops')
-			alert('something went wrong. whoops')
+			addToast('Something went wrong. Please try again later.', {
+				appearance: 'error',
+				autoDismiss: true,
+			})
 		}
 	}
 

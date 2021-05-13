@@ -48,10 +48,13 @@
 .btn-checkin {
 	@apply w-2/3 mb-2 rounded-md border-2 border-gray-800;
 }
+.btn-cancel {
+	@apply bg-gray-500;
+}
 
 .modal-cover {
 	@apply fixed top-2/4 left-0 right-0 bottom-0 bg-white;
-	@apply border-t-[8px] rounded-t-[10%] border-gray-500;
+	@apply border-t-[4px] rounded-t-[5%] border-gray-500;
 	@apply grid place-items-center;
 }
 

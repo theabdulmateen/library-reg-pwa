@@ -5,13 +5,18 @@ import { useRouter } from 'next/router'
 import { GetServerSideProps, GetServerSidePropsResult } from 'next'
 import { User } from '@prisma/client'
 import fetch from 'isomorphic-fetch'
+import { useToasts } from 'react-toast-notifications'
 
 import { isAuth } from 'lib/auth'
 import FormInput from 'components/FormInput'
 import { getAccessToken, setAccessToken } from 'lib/accessToken'
 
 const QrReader = dynamic(() => import('react-qr-reader'), {
-	loading: () => <p>loading...</p>,
+	loading: () => (
+		<div className='grid place-items-center text-2xl w-screen h-screen'>
+			loading QR Scanner...
+		</div>
+	),
 	ssr: false,
 })
 
@@ -25,6 +30,7 @@ export default function Home({ user, accessToken }: HomeProps) {
 	const [modalShown, setModalShown] = useState(false)
 	const [srn, setSrn] = useState('')
 	const router = useRouter()
+	const { addToast } = useToasts()
 
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
@@ -55,11 +61,12 @@ export default function Home({ user, accessToken }: HomeProps) {
 		const data = (await checkIn(srn, qrValue)) as any
 		if (data.success) {
 			localStorage.setItem('lId', qrValue)
+			addToast('Checked in successfully', { appearance: 'success', autoDismiss: true })
 			router.replace('/checkout')
 		} else {
 			console.error('check-in failed')
 			console.log('data: ', data)
-			alert('check-in failed')
+			addToast('Check-In failed', { appearance: 'error', autoDismiss: true })
 		}
 		setModalShown(false)
 	}
@@ -71,6 +78,10 @@ export default function Home({ user, accessToken }: HomeProps) {
 				setSrn(user.srn)
 			}
 			setModalShown(true)
+			addToast(`Scanned QR-code, value: '${data}'`, {
+				appearance: 'success',
+				autoDismiss: true,
+			})
 		} else {
 			console.error('scan failed...')
 		}
@@ -136,9 +147,18 @@ export default function Home({ user, accessToken }: HomeProps) {
 								setValue={setQrValue}
 								type='text'
 							/>
-							<button onClick={handleSubmit} className='btn-action btn-checkin'>
-								Check In
-							</button>
+							<div className='flex w-full'>
+								<button
+									onClick={() => setModalShown(false)}
+									className='btn-action btn-checkin mr-2 bg-gray-400'>
+									Cancel
+								</button>
+								<button
+									onClick={handleSubmit}
+									className='btn-action btn-checkin ml-2'>
+									Check In
+								</button>
+							</div>
 						</div>
 					</Modal>
 				)}

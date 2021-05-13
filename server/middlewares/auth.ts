@@ -6,7 +6,10 @@ export const getJWTToken: RequestHandler = (req, res) => {
 	if (!req.user) {
 		return res.boom.notFound('User does not exist')
 	} else {
-		authUtils.refreshAllTokens(res, req.user.id)
+		const refreshTokenJWT = authUtils.generateRefreshTokenJWTToken(req.user.id)
+		res.cookie('rtk', refreshTokenJWT.token, {
+			httpOnly: true,
+		})
 		return res.redirect('/')
 	}
 }
